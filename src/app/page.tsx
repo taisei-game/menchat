@@ -18,26 +18,26 @@ export default function Home() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-semibold tracking-[0.14em] text-[var(--muted)]">STATUS</p>
-              <h2 className="mt-2 text-lg font-semibold">開発準備中です</h2>
+              <h2 className="mt-2 text-lg font-semibold">仮完成版</h2>
             </div>
-            <span className="h-3 w-3 rounded-full bg-[#e3a847]" aria-label="準備中" />
+            <span className="h-3 w-3 rounded-full bg-[#3aa76d]" aria-label="仮完成" />
           </div>
           <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-            認証とデータ接続の設定が完了すると、ここから各機能を利用できるようになります。
+            基本の認証・トーク・掲示板・設定を利用できます。ショートと通知の一部は追加設定・実装が必要です。
           </p>
         </section>
 
         <section>
           <div className="flex items-end justify-between">
             <h2 className="text-lg font-semibold">行き先</h2>
-            <span className="text-xs text-[var(--muted)]">5つの機能</span>
+            <span className="text-xs text-[var(--muted)]">4つの機能</span>
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {[
               ["トーク", "みんなとの会話", "/talk"],
               ["掲示板", "話題を残す場所", "/board"],
-              ["ショート", "現在作業中です", "/shorts"],
-              ["設定", "プロフィールと環境", "/settings"],
+              ["ショート", "写真・動画共有（準備中）", "/shorts"],
+              ["設定", "プロフィールと通知", "/settings"],
             ].map(([title, description, href]) => (
               <Link
                 key={href}
