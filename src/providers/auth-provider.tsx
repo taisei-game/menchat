@@ -22,7 +22,7 @@ type AuthContextValue = {
   status: AuthStatus;
   user: User | null;
   error: AuthApiError | Error | null;
-  signInWithLine: () => Promise<void>;
+  signInWithLine: (registrationCode?: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -35,9 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<AuthApiError | Error | null>(null);
 
   useEffect(() => {
-    if (hasMissingConfig) {
-      return;
-    }
+    if (hasMissingConfig) return;
 
     let unsubscribe: (() => void) | undefined;
 
@@ -55,11 +53,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     void subscribeToAuthState();
-
     return () => unsubscribe?.();
   }, [hasMissingConfig]);
 
-  async function signInWithLine(): Promise<void> {
+  async function signInWithLine(registrationCode?: string): Promise<void> {
     setError(null);
     setStatus("loading");
 
@@ -73,12 +70,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const idToken = liff.getIDToken();
-
       if (!idToken) {
         throw new Error("LINEのログイン情報を取得できませんでした。もう一度お試しください。");
       }
 
-      const { customToken, displayName, pictureUrl } = await exchangeLineToken(idToken);
+      const { customToken, displayName, pictureUrl } = await exchangeLineToken(idToken, registrationCode);
       const credential = await signInWithCustomToken(getAuth(getFirebaseApp()), customToken);
       if (displayName || pictureUrl) {
         try {
@@ -116,11 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuthはAuthProviderの内側で使用してください。");
-  }
-
+  if (!context) throw new Error("useAuthはAuthProviderの内側で使用してください。");
   return context;
 }
 
