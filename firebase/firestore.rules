@@ -1,0 +1,94 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isMember() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/members/$(request.auth.uid))
+        && get(/databases/$(database)/documents/members/$(request.auth.uid)).data.isActive == true;
+    }
+
+    function isOwner(resourceData) {
+      return isSignedIn() && resourceData.authorUid == request.auth.uid;
+    }
+
+    match /members/{uid} {
+      allow read: if isMember() && uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /notificationSubscriptions/{subscriptionId} {
+      allow read: if isMember() && resource.data.ownerUid == request.auth.uid;
+      allow create, update: if isMember()
+        && request.resource.data.keys().hasOnly(['ownerUid', 'endpoint', 'expirationTime', 'keys', 'updatedAt'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.endpoint is string
+        && request.resource.data.endpoint.size() <= 2048
+        && request.resource.data.keys.p256dh is string
+        && request.resource.data.keys.auth is string;
+      allow delete: if isMember() && resource.data.ownerUid == request.auth.uid;
+    }
+
+    match /notificationSettings/{uid} {
+      allow read: if isMember() && uid == request.auth.uid;
+      allow create, update: if isMember()
+        && uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['ownerUid', 'enabled', 'updatedAt'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.enabled is bool;
+    }
+
+    match /talkRooms/{roomId} {
+      allow read: if isMember();
+      allow write: if false;
+
+      match /messages/{messageId} {
+        allow read: if isMember();
+        allow create: if isMember()
+          && request.resource.data.keys().hasOnly(['authorUid', 'displayName', 'postMode', 'body', 'createdAt'])
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.displayName is string
+          && request.resource.data.postMode in ['anonymous', 'named']
+          && request.resource.data.body is string
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 2000;
+        allow delete: if isMember() && isOwner(resource.data);
+        allow update: if false;
+      }
+    }
+
+    match /boardThreads/{threadId} {
+      allow read: if isMember();
+      allow create: if isMember()
+        && request.resource.data.keys().hasOnly(['createdByUid', 'title', 'createdAt', 'updatedAt', 'replyCount'])
+        && request.resource.data.createdByUid == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.replyCount == 0;
+      allow update: if isMember()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replyCount', 'updatedAt'])
+        && request.resource.data.replyCount == resource.data.replyCount + 1
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isMember() && resource.data.createdByUid == request.auth.uid;
+
+      match /posts/{postId} {
+        allow read: if isMember();
+        allow create: if isMember()
+          && request.resource.data.keys().hasOnly(['number', 'authorUid', 'displayName', 'postMode', 'body', 'createdAt'])
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.body is string
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 2000
+          && request.resource.data.postMode in ['anonymous', 'named'];
+        allow delete: if isMember() && isOwner(resource.data);
+        allow update: if false;
+      }
+    }
+
+  }
+}

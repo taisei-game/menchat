@@ -1,0 +1,40 @@
+{
+  "name": "menchat",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "worker:typecheck": "tsc --project workers/api/tsconfig.json",
+    "worker:dev": "wrangler dev --config workers/api/wrangler.toml",
+    "worker:deploy": "wrangler deploy --config workers/api/wrangler.toml"
+  },
+  "dependencies": {
+    "@line/liff": "^2.31.0",
+    "@tanstack/react-query": "^5.103.2",
+    "firebase": "^12.19.0",
+    "jose": "^6.2.12",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "webpush-webcrypto": "^1.0.5",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260924.1",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^2.1.9",
+    "wrangler": "^4.137.0"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "menchat",
+  "short_name": "menchat",
+  "description": "8人限定のコミュニケーションサービス",
+  "lang": "ja",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7f2",
+  "theme_color": "#236b4a",
+  "icons": [
+    {
+      "src": "/menchat-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
