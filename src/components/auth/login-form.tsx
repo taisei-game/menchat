@@ -22,10 +22,15 @@ export function LoginForm() {
   }
 
   useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/");
+      return;
+    }
+
     if (error instanceof AuthApiError && error.code === "unauthorized") {
       router.replace("/unauthorized");
     }
-  }, [error, router]);
+  }, [error, router, status]);
 
   const message = error?.message ?? (status === "configuration-error" ? "認証設定が未完了です。管理者に環境変数を確認してもらってください。" : null);
 
