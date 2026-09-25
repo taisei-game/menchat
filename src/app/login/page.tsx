@@ -9,7 +9,7 @@ export default function LoginPage() {
         <p className="text-sm font-semibold tracking-[0.12em] text-[var(--accent)]">menchat</p>
         <h1 className="mt-8 text-2xl font-semibold tracking-tight">ログイン</h1>
         <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
-          LINEログインの設定が完了すると、許可された8人だけが利用できます。
+          LINEアカウントで認証し、登録済みの8人だけが利用できます。
         </p>
         <div className="mt-8">
           <LoginForm />
