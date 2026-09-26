@@ -3,4 +3,4 @@ main = "src/index.ts"
 compatibility_date = "2026-09-24"
 
 [vars]
-CORS_ORIGIN = "http://localhost:3000"
+CORS_ORIGIN = "https://menchat.vercel.app"
