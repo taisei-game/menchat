@@ -4,3 +4,5 @@ compatibility_date = "2026-09-24"
 
 [vars]
 CORS_ORIGIN = "https://menchat.vercel.app"
+
+# Production deployment via Cloudflare Workers Builds
